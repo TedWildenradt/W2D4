@@ -1,3 +1,4 @@
+require 'byebug'
 class MyQueue
 
   def initialize
@@ -63,10 +64,11 @@ class StackQueue
   end
 
   def slide_window(el)
+    # debugger
     @store2.push(el)
-    @store2.push(@store1.pop) until @store1.size == 1
+    @store2.push(@store1.pop.keys[0]) until @store1.size == 1
     @store1.pop
-    @store1.push(@store2.pop) until @store2.empty?
+    @store1.push(@store2.pop.keys[0]) until @store2.empty?
   end
 
   def show
@@ -77,21 +79,70 @@ class StackQueue
 
 end
 
-slinky = StackQueue.new([1,2,3,4,5])
-slinky.slide_window(6)
-slinky.show
+# slinky = StackQueue.new([1,2,3,4,5])
+# slinky.slide_window(6)
+# slinky.show
 
 class MinMaxStack < MyStack
-  def initialize(arr = [])
-    @store = MyStack.new(arr)
-    @min = arr.empty? ? 999 : arr.min
-    @max = arr.empty? ? -999 : arr.max
 
-  end
+  # def initialize
+  #   @store = []
+  # end
 
   def push(el)
-
+    if @store.empty?
+      return @store.push({el => [el,el]})
+    end
+    # debugger
+    temp_max = el > @store[-1].values[0][1] ? el : @store[-1].values[0][1]
+    temp_min = el < @store[-1].values[0][0] ? el : @store[-1].values[0][0]
+    @store.push({el => [temp_min, temp_max]})
   end
 
+  # def size
+  #   @store.size
+  # end
+  #
+  def show
+    p @store
+  end
+
+  def max
+    @store[-1].values[0][1]
+  end
+
+  def min
+    @store[-1].values[0][0]
+  end
 
 end
+
+# arr = MinMaxStack.new
+# arr.push(1)
+# arr.push(5)
+# arr.push(-3)
+# arr.push(2)
+# p arr.max
+# p arr.min
+# arr.show
+
+class MinMaxStackQueue < StackQueue
+
+  def initialize(array)
+    @store1 = MinMaxStack.new
+    @store2 = MinMaxStack.new
+    array.each do |el|
+      @store1.push(el)
+    end
+  end
+
+end
+
+arr = MinMaxStackQueue.new([2,-1,7,8,4,9,100,2])
+arr.slide_window(1)
+arr.slide_window(5)
+arr.slide_window(-3)
+arr.slide_window(2)
+# p arr.max
+# p arr.min
+arr.show
