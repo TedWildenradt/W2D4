@@ -76,6 +76,15 @@ class StackQueue
     p @store2
   end
 
+  # def min
+  #   @store1[-1].values[0][0]
+  # end
+  #
+  # def max
+  #   @store1[-1].values[0][1]
+  # end
+
+
 
 end
 
@@ -136,13 +145,38 @@ class MinMaxStackQueue < StackQueue
     end
   end
 
+  def max
+    @store1.max
+  end
+
+  def min
+    @store1.min
+  end
+
 end
 
-arr = MinMaxStackQueue.new([2,-1,7,8,4,9,100,2])
-arr.slide_window(1)
-arr.slide_window(5)
-arr.slide_window(-3)
-arr.slide_window(2)
+# arr = MinMaxStackQueue.new([2,-1,7,8,4,9,100,2])
+# arr.slide_window(1)
+# arr.slide_window(5)
+# arr.slide_window(-3)
+# arr.slide_window(2)
 # p arr.max
 # p arr.min
-arr.show
+# arr.show
+
+def windowed_max_range(array, window)
+  arr = MinMaxStackQueue.new(array[0...window])
+  res = arr.max - arr.min
+  array[window..-1].each do |el|
+    arr.slide_window(el)
+    temp_dif = arr.max - arr.min
+    res = temp_dif if temp_dif > res
+  end
+
+  res
+end
+
+p windowed_max_range([1, 0, 2, 5, 4, 8], 2)  # 4, 8
+p windowed_max_range([1, 0, 2, 5, 4, 8], 3) == 5 # 0, 2, 5
+p windowed_max_range([1, 0, 2, 5, 4, 8], 4) == 6 # 2, 5, 4, 8
+p windowed_max_range([1, 3, 2, 5, 4, 8], 5) == 6 # 3, 2, 5, 4, 8
